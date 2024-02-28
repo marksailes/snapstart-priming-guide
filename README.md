@@ -2,7 +2,7 @@
 
 ## Goal
 
-This guide aims to explain techniques for priming Java applications without prior knowledge of their functionality. It assumes a base understanding of AWS Lambda, Lambda SnapStart, and CRaC.
+This guide aims to explain techniques for priming Java applications. It assumes a base understanding of AWS Lambda, Lambda SnapStart, and CRaC.
 
 ## What is Priming
 
@@ -43,7 +43,6 @@ public class UnicornPrimingResource implements Resource {
 ```
 
 Once the application is restored, future operations to this controller endpoint will benefit from not having to be compiled. Although the network connection will have to be recreated, the benefit of priming the application framework, AWS SDK / database driver, and Java networking stack can amount to hundreds of milliseconds. 
-
 
 ### Manually Priming Challenges 
 
@@ -94,3 +93,5 @@ An implementation of this approach is [PreloadClassRecorder](https://github.com/
 ## Conclusion 
 
 Both strategies unfortunately involve additional work and complexity as a trade-off to improve first invoke latency. Automatic priming allows you to prime your application without calling methods that have an effect outside of the application. A list of classes can be made in a development environment and either checked into a project or created as part of the build process. If this isn't an issue then manually priming is a simpler approach.
+
+Less work would be required by the application developer if library and framework developers added support for priming.
