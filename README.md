@@ -51,6 +51,46 @@ Manually priming isn't always possible, or easy. It assumes that there is a suit
 
 ## Automatic Priming
 
+Automatic priming is preparing the application for snapshotting without any downstream effect. You can achieve this by calling `Class.forName(classname, true, ClassPreLoader.class.getClassLoader())` for each class your application requires. This is the strategy taken in the [Quarkus AWS Lambda extension](https://quarkus.io/guides/aws-lambda-snapstart). 
 
+To find a list of the classes loaded in the operation of your application you can run your application with `-Xlog:class+load=lnfo:classloaded.txt` VM options. 
 
+You will get a file with the following output
 
+```
+[0.012s][info][class,load] java.lang.Object source: shared objects file
+...
+```
+
+Use your favorite editor to create a file with just the fully qualified name on each line.
+
+```
+java.lang.Object
+java.io.Serializable
+```
+
+Now you can create a generic `org.crac.Resource` implementation which reads a list of classes and calls `Class.forName` on each.
+
+```Java
+public class PrimingResource implements Resource {
+
+    public PrimingResource() {
+        Core.getGlobalContext().register(this);
+    }
+
+    @Override
+    public void beforeCheckpoint(Context<? extends Resource> context) {
+        ClassPreLoader.preloadClasses("classes.txt");
+    }
+
+    @Override
+    public void afterRestore(Context<? extends Resource> context) {
+    }
+}
+```
+
+An implementation of this approach is [PreloadClassRecorder](https://github.com/quarkusio/quarkus/blob/main/core/runtime/src/main/java/io/quarkus/runtime/PreloadClassesRecorder.java).
+
+## Conclusion 
+
+Both strategies unfortunately involve additional work and complexity as a trade-off to improve first invoke latency. Automatic priming allows you to prime your application without calling methods that have an effect outside of the application. A list of classes can be made in a development environment and either checked into a project or created as part of the build process. If this isn't an issue then manually priming is a simpler approach.
