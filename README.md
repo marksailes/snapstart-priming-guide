@@ -20,8 +20,6 @@ The following example creates a new Spring component that implements `org.crac.R
 @Component
 public class UnicornPrimingResource implements Resource {
 
-    private static final Logger logger = LogManager.getLogger();
-
     private final UnicornController unicornController;
 
     public UnicornPrimingResource(UnicornController unicornController) {
@@ -49,7 +47,9 @@ Once the application is restored, future operations to this controller endpoint 
 
 ### Manually Priming Challenges 
 
+Manually priming isn't always possible, or easy. It assumes that there is a suitable endpoint or entry point to the application that can be invoked with no downstream consequences. The alternative can be to bypass the public API of an application and invoke a non-mutating function of a lower layer such as the AWS SDK. You could for example call the `listTables` API on a DynamoDB client. This will benefit the application because although that functionality might not directly be used in customer interactions, it does still have the benefit of JIT compiling other useful code paths. This can lead to yet more complexity if your Lambda function wouldn't normally call that API endpoint, and now it needs additional IAM permissions just to perform performance optimizations. 
 
+## Automatic Priming
 
 
 
