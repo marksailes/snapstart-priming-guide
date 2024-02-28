@@ -90,6 +90,20 @@ public class PrimingResource implements Resource {
 
 An implementation of this approach is [PreloadClassRecorder](https://github.com/quarkusio/quarkus/blob/main/core/runtime/src/main/java/io/quarkus/runtime/PreloadClassesRecorder.java).
 
+## Example Application
+
+I was recently optimizing a Lambda function that used the [AWS EMF client](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Libraries.html). I found that for a trivial use case in on-demand mode it had an init duration of 494ms and a duration of 883ms. Its use of Jackson Databind contributed a lot to this latency. I wanted to prime this function, without creating extra metrics in CloudWatch.
+
+| Method                        | Init / Restore Duration | Duration        | Total   |
+| ----------------------------- | ----------------------- | --------------- | ------- |
+| On-demand                     | 494ms                   | 883ms           | 1,377ms |
+| SnapStart / no priming        | 570ms                   | 713ms           | 1,283ms |
+| SnapStart + automatic priming | 503ms                   | 189ms           | 692ms   |
+
+_This wasn't a benchmark, just a single invoke._
+
+Priming improves the latency in this case by 591ms (46%). 
+
 ## Conclusion 
 
 Both strategies unfortunately involve additional work and complexity as a trade-off to improve first invoke latency. Automatic priming allows you to prime your application without calling methods that have an effect outside of the application. A list of classes can be made in a development environment and either checked into a project or created as part of the build process. If this isn't an issue then manually priming is a simpler approach.
