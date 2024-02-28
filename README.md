@@ -1,4 +1,4 @@
-# Lambda SnapStart Auto-Priming Guide
+# Lambda SnapStart Priming Guide
 
 ## Goal
 
