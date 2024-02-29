@@ -17,6 +17,12 @@ Manual priming uses knowledge of the application functionality to prepare it for
 The following example creates a new Spring component that implements `org.crac.Resource`. It registers itself as part of the constructor. The class also uses constructor dependency injection to access the controller. In the `beforeCheckpoint` method it uses the controller to invoke a read operation on a repository. This means that Java loads all the classes in that path and JIT compiles them. This synthetic request is made before the snapshot is taken, outside of any customer request.
 
 ```Java
+import com.unicorn.store.controller.UnicornController;
+import org.crac.Context;
+import org.crac.Core;
+import org.crac.Resource;
+import org.springframework.context.annotation.Component;
+
 @Component
 public class UnicornPrimingResource implements Resource {
 
@@ -71,6 +77,10 @@ java.io.Serializable
 Now you can create a generic `org.crac.Resource` implementation which reads a list of classes and calls `Class.forName` on each.
 
 ```Java
+import org.crac.Context;
+import org.crac.Core;
+import org.crac.Resource;
+
 public class PrimingResource implements Resource {
 
     public PrimingResource() {
@@ -113,7 +123,7 @@ Less work would be required by the application developer if library and framewor
 ## Improvements to add
 
 - [x] Example data
-- [ ] Include imports in code examples
+- [x] Include imports in code examples
 - [ ] Examples of priming runs in CW
 - [ ] Diagrams to show when and how priming interacts with the application
 - [ ] Possible side effects of priming
