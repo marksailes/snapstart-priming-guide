@@ -129,3 +129,4 @@ Less work would be required by the application developer if library and framewor
 - [ ] Possible side effects of priming
 - [ ] DNS
 - [ ] Recreating connections vs waiting for retry logic
+- [ ] Full project examples which can be deployed
