@@ -130,3 +130,5 @@ Less work would be required by the application developer if library and framewor
 - [ ] DNS
 - [ ] Recreating connections vs waiting for retry logic
 - [ ] Full project examples which can be deployed
+- [ ] Pseudorandomness / Stale creds
+- [ ] Link to Java serverless container when discussing microservices which benefit more from priming
