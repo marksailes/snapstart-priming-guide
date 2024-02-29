@@ -58,7 +58,7 @@ Manually priming isn't always possible, or easy. It assumes that there is a suit
 
 Automatic priming is preparing the application for snapshotting without any downstream effect. You can achieve this by calling `Class.forName(classname, true, ClassPreLoader.class.getClassLoader())` for each class your application requires. This is the strategy taken in the [Quarkus AWS Lambda extension](https://quarkus.io/guides/aws-lambda-snapstart). 
 
-To find a list of the classes loaded in the operation of your application you can run your application with `-Xlog:class+load=lnfo:classloaded.txt` VM options. 
+To find a list of the classes loaded in the operation of your application you can run your application with `-Xlog:class+load=info:classloaded.txt` VM options. 
 
 You will get a file with the following output
 
