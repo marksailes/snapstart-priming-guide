@@ -19,9 +19,13 @@ At deployment time, it creates an execution environment and loads your code into
 
 ## What is Priming
 
-Priming is the name given to the process of preparing a Java application for the process of being snapshotted. Priming aims to reduce the time of the first useful work after a restore. A short introduction is included in the AWS Compute blog [Reducing Java cold starts on AWS Lambda functions with SnapStart](https://aws.amazon.com/blogs/compute/reducing-java-cold-starts-on-aws-lambda-functions-with-snapstart/).
+Priming is the name given to the process of preparing a Java application for being snapshotted. Priming aims to reduce the time of the first useful work after a restore. A short introduction is included in the AWS Compute blog [Reducing Java cold starts on AWS Lambda functions with SnapStart](https://aws.amazon.com/blogs/compute/reducing-java-cold-starts-on-aws-lambda-functions-with-snapstart/).
 
-Although I will use Lambda and SnapStart examples, this would most likely be suitable for any use of [project CRaC](https://openjdk.org/projects/crac/).
+Two components contribute to the latency seen by the requester when an invoke happens on a newly restored environment. The first is how fast Lambda can retrieve your snapshot and load it. This is outside of the customer's control. The second is how fast the customer's code can respond to the request. In Java the first time a class is used it has to be compiled from byte code to machine code.
+
+One of the largest contributors to restore latency is the JIT compilation of functionality not loaded during the initialization phase. For Java functions the initialization phase will load the class you specified in the handler parameter of your Lambda function. Member variables will be initialized, code in static blocks and the constructor will be executed. Code outside of this won't be compiled.
+
+Priming strategies attempt to compile as much as possible before the snapshot is taken, so that it doesn't need to happen while the requester is waiting for a response. Although I will use Lambda and SnapStart examples, this would most likely be suitable for any use of [project CRaC](https://openjdk.org/projects/crac/).
 
 ## Manual Priming
 
