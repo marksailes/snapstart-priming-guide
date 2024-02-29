@@ -4,11 +4,16 @@
 
 This guide aims to explain techniques for priming Java applications. It assumes a base understanding of AWS Lambda, Lambda SnapStart, and CRaC.
 
+## Introduction to Lambda SnapStart
+
+Lambda SnapStart is a performance optimization feature. It reduces the amount of time it takes to return a response to the caller when a new execution environment has been created (cold start).
+At deployment time, it creates an execution environment and loads your code into it. Once the init phase has completed it takes a snapshot of the entire [FireCracker](https://firecracker-microvm.github.io/) microVM. This includes processes, memory, and any files on the file system. The snapshot is encrypted and placed in persistent storage. Then when future execution environments are required, they can be restored from the snapshot instead of being created from scratch. To further improve the restore time, snapshots are cached.
+
 ## What is Priming
 
 Priming is the name given to the process of preparing a Java application for the process of being snapshotted. Priming aims to reduce the time of the first useful work after a restore. A short introduction is included in the AWS Compute blog [Reducing Java cold starts on AWS Lambda functions with SnapStart](https://aws.amazon.com/blogs/compute/reducing-java-cold-starts-on-aws-lambda-functions-with-snapstart/).
 
-Although I will use Lambda and SnapStart examples, this would most likely be suitable for any use of CRaC.
+Although I will use Lambda and SnapStart examples, this would most likely be suitable for any use of [project CRaC](https://openjdk.org/projects/crac/).
 
 ## Manual Priming
 
@@ -124,7 +129,7 @@ Less work would be required by the application developer if library and framewor
 
 - [x] Example data
 - [x] Include imports in code examples
-- [ ] Intro to the benefits of snapshotting
+- [x] Intro to the benefits of snapshotting
 - [ ] Diagram of the snapshot lifecycle
 - [ ] Examples of priming runs in CW
 - [ ] Diagrams to show when and how priming interacts with the application
