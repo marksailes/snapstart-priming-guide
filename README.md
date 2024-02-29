@@ -109,3 +109,11 @@ Priming improves the latency in this case by 591ms (46%).
 Both strategies unfortunately involve additional work and complexity as a trade-off to improve first invoke latency. Automatic priming allows you to prime your application without calling methods that have an effect outside of the application. A list of classes can be made in a development environment and either checked into a project or created as part of the build process. If this isn't an issue then manually priming is a simpler approach.
 
 Less work would be required by the application developer if library and framework developers added support for priming.
+
+## Improvements to add
+
+- [x] Example data 
+- [ ] Diagrams to show when and how priming interacts with the application
+- [ ] Possible side effects of priming
+- [ ] DNS
+- [ ] Recreating connections vs waiting for retry logic
