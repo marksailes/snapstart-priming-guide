@@ -112,7 +112,9 @@ Less work would be required by the application developer if library and framewor
 
 ## Improvements to add
 
-- [x] Example data 
+- [x] Example data
+- [ ] Include imports in code examples
+- [ ] Examples of priming runs in CW
 - [ ] Diagrams to show when and how priming interacts with the application
 - [ ] Possible side effects of priming
 - [ ] DNS
