@@ -124,6 +124,8 @@ Less work would be required by the application developer if library and framewor
 
 - [x] Example data
 - [x] Include imports in code examples
+- [ ] Intro to the benefits of snapshotting
+- [ ] Diagram of the snapshot lifecycle
 - [ ] Examples of priming runs in CW
 - [ ] Diagrams to show when and how priming interacts with the application
 - [ ] Possible side effects of priming
