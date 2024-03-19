@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly 'com.hkupty.penna:penna-core:0.7.0'
+
+    implementation 'com.amazonaws:aws-lambda-java-core:1.2.1'
+    implementation 'org.slf4j:slf4j-api:2.0.9'
+    implementation 'org.crac:crac:1.4.0'
+    implementation 'software.amazon.cloudwatchlogs:aws-embedded-metrics:4.1.3'
+}
+
+task buildZip(type: Zip) {
+    from compileJava
+    from processResources
+    into('lib') {
+        from configurations.runtimeClasspath
+    }
+}
+
+build.dependsOn buildZip

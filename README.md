@@ -73,7 +73,7 @@ Manually priming isn't always possible, or easy. It assumes that there is a suit
 
 ## Automatic Priming
 
-Automatic priming is preparing the application for snapshotting without any downstream effect. You can achieve this by calling `Class.forName(classname, true, ClassPreLoader.class.getClassLoader())` for each class your application requires. This is the strategy taken in the [Quarkus AWS Lambda extension](https://quarkus.io/guides/aws-lambda-snapstart). 
+Automatic priming is preparing the application for snapshotting without any downstream effect. You can achieve this by calling `Class.forName(classname, true, software.snapstart.priming.ClassPreLoader.class.getClassLoader())` for each class your application requires. This is the strategy taken in the [Quarkus AWS Lambda extension](https://quarkus.io/guides/aws-lambda-snapstart). 
 
 To find a list of the classes loaded in the operation of your application you can run your application with `-Xlog:class+load=info:classloaded.txt` VM options. 
 
@@ -93,43 +93,30 @@ java.io.Serializable
 
 Now you can create a generic `org.crac.Resource` implementation which reads a list of classes and calls `Class.forName` on each.
 
+From [HandlerWithAutomaticPriming.java](/examples/emf/emf-client-example/src/main/java/software/example/HandlerWithAutomaticPriming.java)
+
 ```Java
-import org.crac.Context;
-import org.crac.Core;
-import org.crac.Resource;
-
-public class PrimingResource implements Resource {
-
-    public PrimingResource() {
-        Core.getGlobalContext().register(this);
-    }
-
-    @Override
-    public void beforeCheckpoint(Context<? extends Resource> context) {
-        ClassPreLoader.preloadClasses("classes.txt");
-    }
-
-    @Override
-    public void afterRestore(Context<? extends Resource> context) {
-    }
+public void beforeCheckpoint(org.crac.Context<? extends Resource> context) throws Exception {
+    ClassPreLoader.preloadClasses(true);
 }
 ```
 
-An implementation of this approach is [PreloadClassRecorder](https://github.com/quarkusio/quarkus/blob/main/core/runtime/src/main/java/io/quarkus/runtime/PreloadClassesRecorder.java).
+An implementation of this approach is included in the example [ClassPreLoader.java](/examples/emf/emf-client-example/src/main/java/software/snapstart/priming/ClassPreLoader.java).
 
 ## Example Application
 
-I was recently optimizing a Lambda function that used the [AWS EMF client](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Libraries.html). I found that for a trivial use case in on-demand mode it had an init duration of 494ms and a duration of 883ms. Its use of Jackson Databind contributed a lot to this latency. I wanted to prime this function, without creating extra metrics in CloudWatch.
+I was recently optimizing a Lambda function that used the [AWS EMF client](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Libraries.html). I found that for a trivial use case in on-demand mode it had an init duration of 765ms and a duration of 738ms. Its use of Jackson Databind contributed a lot to this latency. I wanted to prime this function, without creating extra metrics in CloudWatch.
 
-| Method                        | Init / Restore Duration | Duration        | Total   |
-| ----------------------------- | ----------------------- | --------------- | ------- |
-| On-demand                     | 494ms                   | 883ms           | 1,377ms |
-| SnapStart / no priming        | 570ms                   | 713ms           | 1,283ms |
-| SnapStart + automatic priming | 503ms                   | 189ms           | 692ms   |
+You can find the code I used in the [examples folder](/examples/emf).
 
-_This wasn't a benchmark, just a single invoke._
+| Method                        | Init / Restore Duration | Duration | Total   |
+|-------------------------------|-------------------------|----------|---------|
+| On-demand                     | 765ms                   | 738ms    | 1,377ms |
+| SnapStart / no priming        | 581ms                   | 708ms    | 1,289ms |
+| SnapStart + manual priming    | 627ms                   | 652ms    | 1,279ms |
+| SnapStart + automatic priming | 589ms                   | 404ms    | 993ms   |
 
-Priming improves the latency in this case by 591ms (46%). 
+_This wasn't a benchmark, just a single invoke, measured with 512MB memory._
 
 ## Conclusion 
 
@@ -143,11 +130,11 @@ Less work would be required by the application developer if library and framewor
 - [x] Include imports in code examples
 - [x] Intro to the benefits of snapshotting
 - [x] Diagram of the snapshot lifecycle
+- [x] Full project examples which can be deployed
 - [ ] Examples of priming runs in CW
 - [ ] Diagrams to show when and how priming interacts with the application
 - [ ] Possible side effects of priming
 - [ ] DNS
 - [ ] Recreating connections vs waiting for retry logic
-- [ ] Full project examples which can be deployed
 - [ ] Pseudorandomness / Stale creds
 - [ ] Link to Java serverless container when discussing microservices which benefit more from priming

@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  emf-priming-example
+
+  Sample SAM Template for emf-priming-example
+
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 512
+    Tracing: Active
+
+Resources:
+  EmfExampleWithAutomaticPriming:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: emf-client-example
+      Handler: software.example.HandlerWithAutomaticPriming
+      Runtime: java17
+      AutoPublishAlias: live
+      SnapStart:
+        ApplyOn: PublishedVersions
+
+  EmfExampleWithManualPriming:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: emf-client-example
+      Handler: software.example.HandlerWithManualPriming
+      Runtime: java17
+      AutoPublishAlias: live
+      SnapStart:
+        ApplyOn: PublishedVersions
+
+  EmfExampleWithNoPriming:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: emf-client-example
+      Handler: software.example.HandlerWithNoPriming
+      Runtime: java17
+      AutoPublishAlias: live
+      SnapStart:
+        ApplyOn: PublishedVersions
